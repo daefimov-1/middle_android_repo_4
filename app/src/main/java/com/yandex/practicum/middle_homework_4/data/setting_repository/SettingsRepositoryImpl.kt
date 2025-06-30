@@ -51,10 +51,12 @@ class SettingsRepositoryImpl(
             dataStore.data.collect { pref ->
                 val refreshPeriod = pref.get(REFRESH_PERIOD_KEY)
                 val firstLaunchDelay = pref.get(FIRST_LAUNCH_DELAY_KEY)
-                _state.value = SettingContainer(
-                    refreshPeriod ?: SettingContainer.DEFAULT_REFRESH_PERIOD,
-                    firstLaunchDelay ?: SettingContainer.FIST_LAUNCH_DELAY,
-                )
+                _state.update {
+                    it.copy(
+                        periodic = refreshPeriod ?: SettingContainer.DEFAULT_REFRESH_PERIOD,
+                        delayed = firstLaunchDelay ?: SettingContainer.FIST_LAUNCH_DELAY
+                    )
+                }
             }
         }
     }

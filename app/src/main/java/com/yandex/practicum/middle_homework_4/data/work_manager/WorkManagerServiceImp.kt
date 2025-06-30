@@ -49,11 +49,7 @@ class WorkManagerServiceImp(
         val networkConstraints = createConstraints()
         val saveRequest = PeriodicWorkRequestBuilder<RefreshWorker>(repeat, TimeUnit.MINUTES)
             .setConstraints(networkConstraints)
-            .setBackoffCriteria(
-                backoffPolicy = BackoffPolicy.LINEAR,
-                backoffDelay = delayed,
-                timeUnit = TimeUnit.SECONDS
-            )
+            .setInitialDelay(delayed, TimeUnit.SECONDS)
             .build()
         return saveRequest
     }
