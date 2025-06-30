@@ -3,6 +3,7 @@ package com.yandex.practicum.middle_homework_4.data.work_manager
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
+import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
@@ -39,16 +40,18 @@ class WorkManagerServiceImp(
     }
 
     private fun createConstraints(): Constraints {
-        // Реализуйте метод, возвращающий Constraints
-        // В условиях укажите необходимость наличия интернет соединения.
+        return Constraints.Builder()
+            .setRequiredNetworkType(networkType = NetworkType.CONNECTED)
+            .build()
     }
 
     private fun createRequest(repeat: Long, delayed: Long): PeriodicWorkRequest {
         val networkConstraints = createConstraints()
-        // Допишите реализацию метода и верните WorkRequest на периодическую задачу для RefreshWorker
-        // Интервал запуска задачи (в минутах)  = repeat.
-        // Отсрочка запуска задачи в (секундах) = delayed.
-        // Не забудьте в билдере указать constraints.
+        val saveRequest = PeriodicWorkRequestBuilder<RefreshWorker>(repeat, TimeUnit.MINUTES)
+            .setConstraints(networkConstraints)
+            .setInitialDelay(delayed, TimeUnit.SECONDS)
+            .build()
+        return saveRequest
     }
 
     override fun launchRefreshWork() {
